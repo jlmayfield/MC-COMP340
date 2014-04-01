@@ -1,0 +1,89 @@
+\documentclass[]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{clrscode3e}
+\usepackage{varwidth}
+  
+\title{The Bubble-Down Algorithm for Constructing Heaps}
+\author{Logan Mayfield}
+%\date{Spring 2014}
+
+\begin{document} 
+\maketitle
+
+\section{Introduction}
+The bubble-down algorithm takes a semi-heap, a binary tree in which all nodes but the root satisfy the heap property, and produces a heap.  It is from this outcome that bubble-down derives its other common name, \textit{heapify}.  The algorithm works By systematically swapping, or bubbling, the non-heap root value down the tree until a heap is formed and provides a $O(\lg n)$ means of turning an $n$ node semi-heap into a proper heap. 
+
+\section{The \textit{bubble-down} Algorithm}
+
+Let $T$ be a heap or semi-heap with root value $T.v$ and left and right sub-heaps $T.l$ and $T.r$. When the root value $T.v$ is less than or equal to the roots values of $T.l$ and $T.r$ then $T$ is heap.  If, however $T.v$ is greater than the root of one of it's child-heaps, then $T$ is a semi-heap and bubble-down will swap $T.v$ with the smallest child root value. In doing so, that sub-heap might in turn because a semi-heap.  To fix this, we can simply recursively bubble-down on that sub-tree. This leads to the following pseudocode for bubble-down
+\begin{figure}[ht]
+\begin{center}
+\begin{varwidth}{\linewidth}
+\begin{codebox}
+\Procname{\textsc{Bubble-Down}(\id{T})}
+\li  $min \gets T$
+\li  \For $c$ $\gets$ each child of $T$ \Do \label{li:child-loop}
+\li     \If \attrib{c}{V} $>$ \attrib{T}{v}
+\li        \Then
+             $min \gets c$
+        \End
+     \End
+     
+\li  \If $min \neq T$	\Then\label{li:swap}
+\li     \func{swap}(\attrib{T}{v}, \attrib{min,v})
+\li     \proc{Bubble-Down}($min$)
+	 \End
+\end{codebox}
+\end{varwidth}
+\end{center}
+\caption{Pseudo-code for the \textit{bubble-down} algorithm}
+\end{figure}
+
+
+When the heap/semi-heap \id{T} has no children,  then we're dealing with the base case of \textit{bubble-down} and no change is made to $T$. Otherwise we see that on line \ref{li:child-loop} we check each available child of \id{T} to see if it's root value is less than $T$ and if it is, mark it as the \id{min}. If \id{T} is not the min, then we'll swap and recurse on line \ref{li:swap}, otherwise \id{T} was the min and the algorithm can terminate without further recursion.  
+
+\section{Analysis}
+
+Bubble-down works because the initial tree was a semi-heap, it's left and right sub-trees were heaps.  Thus, in the case where $T$ is smaller than the root value of its children, we can infer that it is smaller than all the nodes in the tree and the tree is, therefore, a heap.  If we assume the standard array implementation of a heap, then the tree is always complete and balanced and access to the subtrees takes $O(1)$ time.  In the worst case, bubble-down must swap the initial root all the way down to a leaf spot.  This takes $O(lg n)$ time as finding the swap node and carrying out the swap takes $O(1)$ time.
+
+\section{Conclusions}
+
+Bubble-down is an efficient process for transforming a semi-heap into a heap. The presentation here focused on min-heaps,  but it should be clear that the algorithm can easily be adapted for max-heaps. Given the easy array-based, balanced tree implementation of a heap, it's safe to assume the $O(\lg n)$ upper-bound in practice. 
+
+An efficient bubble-down procedure is a critical element of efficient heap construction and the heap-sort algorithm. By applying bubble-down from the deepest non-leaf nodes up to the root of an arbitrary balanced binary tree, one can construct a heap in $O(n)$ time.  If the root values of that heap are then repeatedly removed, then the contents are the tree are given in sorted order and you've carried out heap-sort. So, bubble-down is not only useful in the creation and management of heaps, but it serves as the basis for efficient sorting as well.
+
+\newpage
+\section{Appendix: Iterative Bubble-Down}
+
+Here we provide an iterative, loop-based implementation of bubble-down.  The looped code is nearly identical to the body of the recursive implementation. The main loop is driven by a boolean flag that indicates whether or not a swap occurred on the last iteration.   
+
+\begin{figure}[ht]
+\begin{center}
+\begin{varwidth}{\linewidth}
+\begin{codebox}
+\Procname{\textsc{Bubble-Down}(\id{T})}
+\li $cur \gets T$
+\li $swapped \gets $true
+\li \While \id{swapped} \Do
+\li    \id{swapped} $\gets$ false 
+\li    $min \gets cur$
+\li    \For $c$ $\gets$ each child of $cur$ \Do 
+\li       \If \attrib{c}{V} $>$ \attrib{T}{v}
+\li          \Then
+               $min \gets c$
+            \End
+       \End     
+\li  \If $min \neq c$ \Then 
+\li     \func{swap}(\attrib{T}{v}, \attrib{min,v})
+\li     \id{swapped} $\gets$ true
+	 \End
+   \End	 
+\end{codebox}
+\end{varwidth}
+\end{center}
+\caption{An Iterative version of the \textit{bubble-down} algorithm}
+\end{figure}
+
+When the tree \id{T} is empty or is a singleton tree node, then the inner loop will not execute, no swaps will occur and the algorithm will terminate without changing $T$. This is equivalent to the base-case of the recursion. By setting the flag \id{swapped} to false at the start of each loop and only setting it to true if a swap occurs, we ensure that in the case where the tree at $cur$ is a proper heap, the algorithm will terminate. Thus, we see the underlying logic is equivalent to that of the recursive implementation.  If follows then that the efficiency analysis is the same and that the iterative algorithm is also $O(\lg n)$
+
+\end{document}
