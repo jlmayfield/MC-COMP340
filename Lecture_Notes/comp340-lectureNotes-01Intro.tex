@@ -1,0 +1,75 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+
+ 
+\title{COMP 340 - Lecture Notes - 01 - Introduction }
+\date{Spring 2014}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In these notes we discuss bringing HtDP design ideas over to the realm of Algorithms. In doing so we explore some larger themes in the design of computational objects and perhaps design in general.  
+\end{abstract}
+
+\begin{quote}
+``An algorithm is a procedure to accomplish a specific task.''\sidenote{Skiena. pg. 3}
+\end{quote}
+
+\section{How to Design Algorithms}
+
+Here at Monmouth we start out by looking at \textit{How to Design Programs}\sidenote{\url{http://htdp.org}}, which provides you with some recipes \sidenote{Note quite algorithms} for designing and implementing computer programs.  Our main text in this course class is titled \textit{The Algorithm Design Manual}.  So from page zero, it's clear we're looking at how to construct algorithms and not just planning memorize algorithms' greatest hits.  You should quickly notice similarities in the HtDP approach and the algorithm design process advocated by Skiena. Let's go ahead and connect some dots though and let this connection start to fester in our brains.  
+
+\section{HtDP Recipes}
+
+Let's take a high-level view of the HtDP recipe\sidenote{with some modifications}.
+\begin{enumerate}
+\item Analyze the problem and formulate \textit{Data Definitions} for representations of problem information as computational data\sidenote{objects, variables, etc.}.  Develop examples of specific information as data. Iteratively refine data representations based on examples.
+\item Analyze the problem and for each function\sidenote{procedure, method, etc.}, formulate a \textit{signature}, \textit{statement of purpose}, and as needed \textit{preconditions}, \textit{postconditions}, and \textit{descriptions of side effects}. Develop examples of specific instances of the functions and formulate them as test cases. Iteratively refine function specifications based on examples.
+\item Write templates for each function based on the structure\sidenote{Atomic,Compound,Itemization,Self-Referencing,Mutually-Referencing, or Cyclic} of function input(s).
+\item Code using test cases as a guide; Iteratively refine the program and program design based on further examples/tests.  
+\item Evaluate the completed program and repeat the above steps in order to iteratively improve or generalize the program\sidenote{abstraction} based on example runs of the program and individual test cases.
+\end{enumerate}
+
+It's crucial to recognize that this process is, at several levels, informed by the examination of \textit{specific, concrete, and actionable examples}.  When we're deciding on the best data representation, we use concrete examples to determine if our \textit{data model} can express all the problem information we need to express. We can then iteratively improve our model based on our experience with our examples. When we're choosing the right set of functions for our program, we use examples to be sure we've covered all the needed functionality and relationships between problem information.  Once again, experience earned by examining specific examples allows us to iteratively improve upon our function choices. When our code is written, our examples become the tests that allow us to evaluate our program for some basic correctness\sidenote{the only guarantee is that our behaves correctly for our tests!} and run-time efficiency.   Finally, the entire process can then be repeated in order to improve upon or program or generate more general purpose, reusable code via abstraction.  In this case, concrete instances of running the program and its tests help to inform the process. To better understand this process, you can find a large number of specific examples of it in action in \href{http://htdp.org}{HtDP1e} and \href{http://www.ccs.neu.edu/home/matthias/HtDP2e/}{HtDP2e}.\sidenote{Key to computing success?: \begin{enumerate} \item Find concrete examples \item Profit! \end{enumerate}}
+
+\section{How to Design $X$}
+
+Let's abstract on the HtDP design recipe a little bit.
+\begin{enumerate}
+\item \textit{Modeling:} Identify the real-world problem and iteratively develop a model\sidenote{$\{$functional, procedural, Object-Oriented$\} \rightarrow$  computational} of the problem through well chosen examples.
+\item \textit{Planning:} Develop an outline/plan for the solution\sidenote{programmatic} to the model of the problem.
+\item \textit{Implementing:} Iteratively implement the solution with the help of concrete test cases
+\item \textit{Improving:} Iterate the design process to improve\sidenote{better models, more general solutions, etc.} upon the overall solution.
+\end{enumerate}
+
+You could probably capture a lot of design processes with this four step model.  I'll leave it to you to think about that. We'll stick to Programs and Algorithms for now.  If this is an accurate, generalized model of our program design process, then it should capture our HtDP process.  It certainly seems to, and that's not a big surprise as this generalization is based upon the HtDP process! The real test is to see if this model captures a new example.  The example we're concerned with is \textit{How to Design Algorithms.} \sidenote{hopefully the choice of language in this paragraph was not lost on you}
+
+\section{How to Design Algorithms}
+
+Skiena isn't as direct\sidenote{Chapter 10 is pretty darn close though} with his design process as HtDP, but it's clear from the first chapter of the text that his design process goes something like this:
+\begin{enumerate}
+\item Identify the real-world problem, give it a \textit{name}, and identify the problem's \textit{inputs and outputs}. Choose an abstract model\sidenote{combinatorial, recursive, etc.} for it's input and output. Check models against concrete instances of the problem. 
+\item Formulate a high-level strategy for solving the model of the problem.
+\item Write a complete pseudo-code algorithm. 
+\item Evaluate algorithm correctness by finding counter-examples to prove it incorrect or proving correctness mathematically\sidenote{probably with induction}. Use concrete examples to develop proofs or to motivate improvements to algorithm for the sake of correctness.
+\item Evaluate algorithm efficiency under the RAM computing model\sidenote{or a suitably chosen model of computation} using asymptotic\sidenote{big Oh} worst-case\sidenote{average-case analysis is a field of research in and of itself} analysis. Use concrete example to motivate improvements for the sake of efficiency.
+\item Generate examples of implementations of the algorithm on a real-world computing system. Evaluate the algorithm for ease of implementation. Evaluate the implementations for correctness and efficiency\sidenote{This is the field of Experimental Algorithmics}.
+\end{enumerate}
+
+Step one is clearly the analysis and modeling phase. Step two is the planning phase. Step three is implementation. The remain steps are the improvement phase broken down by the attributes of algorithms that we want to improve upon: \textit{correctness, efficiency, and ease of implementation}. So, it seems that our generalized HtD$X$ model is sufficiently expressive for both HtDP and HtDA.  However, we really need to put the HtDA recipe through its paces and evaluate it based on some concrete examples.\sidenote{ That should take us, oh, about one semester. }
+
+\section{How to Design Proofs}
+
+Much of our HtD$X$ process applies to designing and writing mathematical proofs. We'll do some of that in this class, and if writing proofs is something you've struggled with\sidenote{not uncommon. don't feel bad about it. do try to get better at it though}, then you should really reflect on how to cast your proof writing process within this mold.  That's all I'm going to say about proofs at this point, but I do want to point out a really excellent, basic, and free text called \textit{The Book of Proof}\sidenote{\url{http://www.people.vcu.edu/~rhammack/BookOfProof/}} by Richard Hammack.  It's well worth checking out if you're looking to step up your proof writing game. 
+
+\section{And so...}
+
+If you take away one big picture thing from here\sidenote{other than concrete examples are key} it might be this:
+
+\begin{quote}
+There is an awful lot of constructive, tangible work to be done before you commit one line of pseudocode to the page. 
+\end{quote}
+
+The process we plan to use doesn't let you get away with just thinking hard about the problem. It requires that you commit your thoughts to paper and write them down.  The value of this step cannot be overstated. It will help you check yourself. It will help you communicate your thoughts to others.  
+\end{document}

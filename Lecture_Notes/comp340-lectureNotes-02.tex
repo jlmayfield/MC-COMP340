@@ -1,0 +1,167 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+
+ 
+\title{COMP 340 - Lecture Notes - 02 - Algorithm and  }
+\date{Spring 2014}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In these notes we discuss the content of chapter 1 of \textit{The Algorithm Design Manual} as it pertains to the algorithm design process and algorithm correctness.
+\end{abstract}
+
+\section{The Design Process}
+
+Let's recall the process we're putting to work here:
+\begin{enumerate}
+\item Identify the real-world problem, give it a \textit{name}, and identify the problem's \textit{inputs and outputs}. Choose an abstract model\sidenote{combinatorial, recursive, etc.} for it's input and output. Check models against concrete instances of the problem. 
+\item Formulate a high-level strategy for solving the model of the problem.
+\item Write a complete pseudo-code algorithm. 
+\item Evaluate algorithm correctness by finding counter-examples to prove it incorrect or proving correctness mathematically\sidenote{probably with induction}. Use concrete examples to develop proofs or to motivate improvements to algorithm for the sake of correctness.
+\item Evaluate algorithm efficiency under the RAM computing model\sidenote{or a suitably chosen model of computation} using asymptotic\sidenote{big Oh} worst-case\sidenote{average-case analysis is a field of research in and of itself} analysis. Use concrete example to motivate improvements for the sake of efficiency.
+\item Generate examples of implementations of the algorithm on a real-world computing system. Evaluate the algorithm for ease of implementation. Evaluate the implementations for correctness and efficiency\sidenote{This is the field of Experimental Algorithmics}.
+\end{enumerate}
+
+\section{Well-specified problems and Models}
+
+The study of algorithms might, at first glance, seem to be about solutions to problems.  It turns out that you really cannot study solutions without also systematically studying the problems themselves.  Why is that so? There are two big reasons we need to consider:
+\begin{enumerate}
+\item The structure and shape of the problem often lends itself to well known models with well-known algorithms and implementations. Thus, we can avoid reinventing some algorithmic and programmatic wheels.
+\item Well-specified problems have a well-defined criteria for correctness.  Correctness for poorly-specified problems is often fuzzy at best.\sidenote{Garbage in, garbage out.}
+\end{enumerate}
+
+Honestly, this all boils down to the fact that you can't expect to develop a reasonable solution to a problem when you don't understand the problem to begin with.  The real difficulty is that we like to think we understand the problem when, in fact, we really don't.  So, how can one make sure the really understand a problem?  You guessed it: \textit{concrete examples of instances of the problem}! Easier said than done though. What exactly constitutes an instance of a problem? How do we come up with them? How many do we need? Are some instances ``better'' than others? Let's start at the beginning: what is a problem and how can we define them in a way that is conducive to examples.  
+
+A well-specified problems has three parts:
+\begin{enumerate}
+\item a name
+\item a well-defined set of possible inputs
+\item well-defined required properties of the output
+\end{enumerate}
+Names should be short, descriptive, and specific. In giving your problem a name it become more tangible. Good names go a long way.
+
+Problem inputs are the information that vary from one instance of the problem to the next.  We should describe the details of how we are modeling them and find some kind of Goldilocks zone where we're not super restrictive but also not too general.  When faced with a difficult problem, it is often a good idea to restrict the input in order to simplify the problem\sidenote{pg 13}.  So, think of it this way. If your definition of the inputs doesn't also imply ways to restrict or generalize the inputs and thereby modify the problem, then it may be the case that your definition isn't refined enough. \textit{Once you think you've settled on a good definition, play around with it and define more restrictive and more generalized versions of you input as a check on how well-formed your definition is.} 
+
+Skiena goes the Jeopardy route with statements about algorithm output and frames them in the form of questions. From this perspective output descriptors become the questions answered by the algorithm\sidenote{This is why they're called problem descriptions in Part II of the text}. A good check you might make is to look at the problem name and output descriptor together.  If they seem clearly related, then you at least have a good name for your problem. Skiena points out two pitfalls for output descriptors\sidenote{pg 13}.
+\begin{enumerate}
+\item Ill-defined questions
+\item Compound goal
+\end{enumerate}
+The first pitfall often boils down to being vague and saying things like ``best'' without being clear what best means. So, try to leave zero ambiguity in your questions.  The extreme on this is to pose your question using formal mathematics rather than natural English.  A nice medium you might play with if you're unsure if your question is ill-defined would be to attempt to capture some of the key properties of your question with Math.  Assuming you're math is correct, it lets you get away with much less than English.  
+The second pitfall would seem to be a case of doing too much and is the same as writing function in our programs that do too many things. If the goal of your algorithm really has multiple distinct goals, then you're probably dealing with multiple problems!  Don't be afraid to step back and see if you can't rethink your problem as several problems working together. In this case, you either simplify your problem or set out to design multiple algorithms.  
+
+There's more to problem specification and example generation though. Problems exist in the real-world, algorithms exist in model-world. This means the understanding we gain in the early parts of design is textured by these layers. The real goals of the first phase of the design process are:  
+\begin{itemize}
+\item Understand the problem as it exists in the real-world\sidenote{Domain Knowledge}
+\item Understand the model of the problem \sidenote{Math and Computing Knowledge} 
+\item Understand the relationship\sidenote{mapping} between the two. 
+\end{itemize}
+The real messy part, and the reason for iterative refinement through exploring concrete examples, is the fact that real problems are often vague and poorly-specified\sidenote{at least in ways that allow verifiable correctness} at first, and so our first crack at a model might not work out.  We could fail to capture crucial information or not capture enough.  In the end, you'll often find that by exploring the real-world to model mapping, you learn more about he real-world, which in turn leads to better models, which in turn leads to better mapping, which in turn leads to a better understanding of the problem, which in turn leads to...\sidenote{you get it}
+
+\subsection{Models}
+
+When you're designing programs, then you model real-world information with program-world data structures.  When you're designing algorithms you need to model with something at least a structured but not tied to a specific programming language or programming paradigm\sidenote{I'm looking at you OOP}. That something is mathematics. Skiena offers the following list:
+\begin{enumerate}
+\item Permutations
+\item Subset
+\item Trees
+\item Graphs
+\item Points
+\item Polygons
+\item Strings 
+\end{enumerate}
+Most of these should be familiar to you, but we'll review a little or a lot as needed. You not only need to know what these things are, but ways in which you might restrict an instance of one of these structures by places conditions on its elements\sidenote{Thankfully, half your textbook is full of examples of this as inputs/outputs of algorithms}. 
+
+There's one big pattern underlying the structure of all of these objects and that is \textit{recursion}.  You should not be surprised by this.  You've been recursively defining structures since semester one.  These recursive decompositions can sometimes lead to efficient algorithms.  They always lead to a place to start and always keep you safe from having nothing to try.  Dust off your recursive thinking, you're going to need it.
+
+\section{An Idea}
+
+So you think you have a good handle on your problem and have defined it in sufficient detail to start taking a crack at designing the algorithm.  Now what? Now you come up with an idea, a plan for how to achieve your solution, a \textit{strategy}.  Remember this stage is comparable to jotting down a template? Strategies are about outlines of how you'll get form input to output.  The good news is that there are a lot of general strategies for us to work with, we just need to learn them. \textit{If our goal is to be algorithm designers, then this is why we study existing algorithms. We want to learn about the strategies they use.}\sidenote{Read this again. Drill it into your head. Always be on the lookout for algorithmic strategies}.
+
+Skeina doesn't seem to give explicit statements of strategy when presenting algorithms.  When we design algorithms, we will always write  write a short statement of the strategy we plan to use in our algorithm.  I can imagine quiz and exam questions focused solely on the efficacy of different strategies for a particular problem. The point is, \textit{we will be explicit and regular in attaching strategies to our algorithms}. As we learn some standard strategies, it is not sufficient to just drop their names as declarations of strategy for our algorithm. We need to contextualize them within our problem. We'll cover strategies encountered in the first chapter later. For now, just store away in your long term memory that no algorithm should be designed without first clearly identifying the overall strategy that the algorithm will carry out.
+
+\section{Psuedocode}
+
+When it comes to choosing a language for specifying algorithms, there are really lots of choices.  Many of them just don't do what we need them to. English\sidenote{any natural langauge} is too vague and leaves too much room for interpretation. Programming languages and formal mathematics are too strict and too fine-grained and force us to delve into details that distract from the the core logic of the problem. As Skiena points out however, we'll ultimately use all three in the specification of our algorithms.  English is best for describing the problem and our overall algorithmic strategy.  Mathematics is perfectly well suited for laying out the properties of our inputs and outputs.  Programming languages are a must if we want to have anything more than a theoretical discussion about the ease of implementing our algorithms.  But, when it comes to specifying the algorithm itself, \textit{psuedocode} is usually the hands down winner. 
+
+There is one problem with psuedocode. It's not really a thing, but an idea. There's no set standard for psuedocode, just generally agreed upon conventions that might vary from one community to another. So, your goal is to mimic the style and conventions of our textbook. Just remember that the goal is clarity. If you don't truly know what you're trying to express with your psuedocode\sidenote{or English, or Code, or Mathematics}, then you're probably not going to write acceptable psuedocode.  One way of checking yourself is to translate your pseudocode into something more precise and something less precise, say, Code\sidenote{or Math} and English. If you can't imagine how to say it in one or both of those languages, rethink what you're doing and see if you can say it in a way that's more clear.
+
+\section{Correctness}
+
+An algorithm is not correct until it has been mathematically proven to be correct.  This is not always an easy task, but the big thing we have going for us is recursion.  If you've done your job right and identified a well-defined input, then that input is likely to have some underlying recursive structure. \textit{Where there is recursion, there is mathematical induction}\sidenote{we'll cover that part of chapter 1 in the next set of notes}.  Before you set out to do an inductive proof of the correctness of your algorithm, you must first explore some concrete instances of your algorithm for two reasons: the examples will help you find the pattern for the induction or \textit{they will help you find an instance where the algorithm does not work}.  So, your best bet is usually to try and prove the algorithm incorrect by counter-example, and wait to attempt a proof of correctness only when you're super-extra convinced its correct\sidenote{Haven't looked at any examples but you're convinced it's correct anyway? Be ready to be wrong.}
+
+\subsection{Incorrectness}
+
+Section 1.3.3 discusses the search for counter-examples to your algorithm's claim of correctness.  \textit{Go read it again.}\sidenote{Then read it 10 more times}. Skiena's advice on page 14 should be committed to memory.  However, if you really and truly understand the conditions placed on a proper counter-examples, then his advice seems like the logical consequences. So, let's repeat those conditions here:
+\begin{enumerate}
+\item \textit{Verifiability} You must show exactly what your algorithm does for your counter-example input \textbf{and}\sidenote{this part is pretty optimization focused} show that the result can be bettered by a different input.
+
+\item \textit{Simplicity} Listen. If the problem instance is complicated and large, you probably can't get your head around it enough to demonstrate verifiability so just don't try. The best counter-examples don't just show that the algorithm fails, they clearly illustrate what about their logic caused them to fail. Nothing is clear with giant inputs. 
+\end{enumerate}
+
+\section{Examples}
+
+Skiena gives us two examples and one war story\sidenote{those things are gold, read and re-read them}in this chapter.  
+\begin{enumerate}
+\item Robot Tour (aka Traveling Salesmen)
+\item Move Scheduling 
+\item Psychic Modeling
+\end{enumerate}
+We should note that all three of these problems are \textsc{Optimization problems}\sidenote{Minimize/Maximize something}.  Not every problem is an optimization problem so let's be on the look out for something different later.  Before we break these down let's be sure we know what the big lessons were:
+\begin{itemize}
+\item Algorithms are always correct. Heuristics are sometimes correct.
+\item Correctness is hard. Don't make assumptions about correctness.
+\item Good modeling is key.
+\end{itemize}
+Great. So the only one I want to talk about is the first. Absent a proof of correctness, how do you know something is a heuristic or an algorithm?  You don't.  Heuristics are really that happy medium between correct and crap. The difference between algorithm and heuristic is clear, but the difference between heuristic and crap might be less so.  How often do you need to be right\sidenote{or how close to right do you need to be} for something to get promoted to heuristic? I'll leave you to think that our for now. Let's look at the design process at work and break down the develop of the algorithms for these problems step-by-step.
+
+
+\subsection{Robot Tour Optimization}
+
+We begin, as all algorithms should, with defining the problem. 
+
+\begin{quote}
+\textit{Problem:} Robot Tour Optimization
+\textit{Input:} A set $S$ of $n$ points in the plane.
+\textit{Problem Description:} What is the shortest cycle tour that visits each point in the set S?
+\end{quote}\sidenote{pg 5.}
+
+Now the author just jumps right to coming ``up with an algorithm to solve this problem'', but that's easy to say and less easy to do when you're new to this game.  What we would do next\sidenote{or concurrently with the problem defining stage} is play around with some concrete instances of \textsc{RTO}.  
+
+% This needs an acutal example
+Where would you start? What's the first kind of example you'd come up with? Me? I'm lazy. I'd find all the trivial examples I could.  It's clear that for $n<3$ this problem is very trivial\sidenote{I see recursive base cases}. So now what? Well, write out a few trivial examples and their solutions. Now, let's build on top of that. Add to those and see what we see. The point here is start easy, not hard\sidenote{Go small or go home}. Make absolutely certain that what you think is easy is in fact easy. Explore any possible nuance of easy. All that easily gotten success will keep you moving when you get to the not so easy stuff and will hopefully make that stuff a little easier.  
+
+Ok. We have examples. Now, it's time to develop and state a strategy.  Skiena just pulled strategies out of the ether. And didn't state them formally. Let's go ahead and do that for him\sidenote{We'll always do this}. We begin with:
+\begin{quote}
+\textit{Strategy:} Move to the nearest neighboring point. Thus if we're at point $p_i$ at step $i$. Then, point $p_{i+1}$ is the point closest to $p_i$. The starting location, $p_0$, is chosen at random. 
+\end{quote}
+Several things to note about this declaration of strategy. We start with something plain and English, and then provide a bit more formalism by effectively defining an iterative process that corresponds to our strategy.  The first sentence is great, but lacks sufficient specificity. Remember, the HtDP process required that we write a template, which outlined the overall structure of the code. So our statements of strategy need to at least provide some kind of high-level, semi-formalized outline for what our pseudocode needs to do.
+
+So, how does he know that nearest-neighbor is a heuristic? The answer is hindsight, of course. The problem is that he announces it as a heuristic before proving that it's not an algorithm.  It's probably best if we imagine starting with the assumption that our strategy is crap. We can then show some cases\sidenote{probably trivial} where it's correct. From there, we need to explore some complex cases and test their correctness. In some cases, we discover that cases exist where the our algorithmic process leads an incorrect solution. At this point we're looking at a heuristic at best\sidenote{if we deem it to be ``correct enough''}.  We might have to accept the fact that our strategy failed. No biggie. At least we know something that doesn't work and can analyze it for where exactly it goes wrong!\sidenote{Something wrong is better than nothing}. 
+
+Back to the process.  We defined the problem and established a strategy for our algorithm. All the while, we should have been working concrete instances of the problem to test our intuition.  Now it's psuedocoding time.  The trick to psuedocode is to finding the right amount of stuff to \textit{not say}. Let's see what kind of logic Skiena\sidenote{pg 6} left out.
+\begin{enumerate}
+\item how to select $p_0$
+\item a specific loop control variable
+\item variable type declarations
+\item how to compute and select $p_i$ given $p_{i+1}$
+\item what it means to visit $p_i$
+\end{enumerate}
+This might seem like a lot of crucial information, and it is if you're setting out to implement this algorithm\sidenote{programmer's problem. not algorithm designers}. So let's recall the goal of this step of the process. \textit{To clearly highlight and convey the general idea laid out in our strategy}. In many respects, our strategy statement was quite clear; it clearly laid out the iterative process carried out by the loop.  So what do we gain from Skiena's pseudocode? I'll argue the following:
+\begin{enumerate}
+\item clear sense of sequencing. 
+\item A more imperative\sidenote{as opposed to declarative} presentation for the idea
+\item A few steps closer to code
+\end{enumerate}
+In the end, we get more specificity without also losing sight of the overall strategy. This is a tricky tightrope to walk, but we'll rely on our authors and each other to find that sweet spot between too much and not enough detail.
+
+Skiena works one more strategy\sidenote{closest-pair. pg 7} before landing on an actual algorithm. The algorithm is dead simple: use \textsc{brute force} and try all possible solutions. Computers are really excellent at this. Don't every forget this strategy because it almost always works. The problem is it's usually painfully inefficient and impractical. So what. This makes it a terrible place to end the process, but a wonderful place to begin. They tell you that at least one algorithm exists and they give you an upper bound on your algorithm; they give you a target to beat\sidenote{always look for a way to get a win when solving problems}
+
+I personally like to make sure I know how to brute-force a problem before I attempt to be clever. It's a good check on your understanding of the problem model. Here's why.  Notice that Skiena's algorithm clearly states the number of possible problems and doesn't just say, ``try all possible solutions.''  The later lacks specificity, the former clearly imposes order on the problem space, order that can be leveraged in to programs\sidenote{if you can count it, you can problem encode it as numbers}. In fact, there are well understood ways of ordering, and therefore stepping through, a set of permutations.   
+
+So, I might go about solving \textsc{Robot Optimization} differently. The first strategy I'd try would be \sidenote{brute-force}.  Seeing that this algorithm works but is entirely intractable, I'd look to improve \textit{the strategy}. What does brute-force do wrong? Well, one way to look at brute force is that the choice of what to do next is made based off nothing other than structures in the model\sidenote{why hello basic HtDP recipe...}. So why not try to dictate the choice based off some knowledge of the problem. This is, in my mind, what leads to things like nearest-neighbor and closest-pair\sidenote{this is all classic AI as well}. Models have very well define structures absent the problem to which you're applying the model; when in doubt, use them as the basis for your strategy. 
+
+
+\end{document}

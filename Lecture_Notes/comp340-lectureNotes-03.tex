@@ -1,0 +1,279 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{clrscode3e}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+ 
+\title{COMP 340 - Lecture Notes - 03 - Recursion, Induction, and Summation}
+\date{Spring 2014}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In these notes we discuss Recursion, Induction, and Summation notation. This material is covered in Skiena Chapter 1.
+\end{abstract}
+
+\section{Recursion}
+
+Recursion is central to our understanding of computation.  
+
+\subsection{Recursive Objects}
+
+Skeina makes it clear that the mathematical structures typically involved in the models used in our algorithms can be recast as well-define \textit{recursive structures}.  We already know a lot about recursive structure from as far back as COMP160 and everyone's favorite first recursive structure, the \textsc{List}. 
+\begin{quote}
+A \textsc{List} has two variants. The first is the empty list $\emptyset$ containing no elements. The second is the composition of a single element, \textit{first}, and another \textsc{List} called rest. 
+\end{quote}  
+
+This definition exhibits all the things you need for a recursive object:
+\begin{enumerate}
+\item There is at least one variant of the structure in which a smaller version of the same structure combined with something else\sidenote{date or another structure}. This is the recursive, or self-referencing, moment in the structure.\sidenote{This is called \textsc{Structural Recursion}}
+\item There is at least one variant in which no recursion takes place. 
+\end{enumerate}
+These requirements leave a lot of freedom in terms of where the recursion happens and how we recursively decompose a structure.  
+\begin{itemize}
+\item Singleton cases
+\item Fixed $n$ cases. (two items, three items, etc.)
+\item $ButLast \circ last$ 
+\item $left \circ right$ 
+\item $first \circ second \circ Rest$
+\end{itemize}
+In all the above $\circ$ is some suitable concatenation/join operation. 
+
+\subsection{Recursive Algorithms}
+
+Once you have a recursive structure, you can often get at some kind of recursive algorithm\sidenote{see HtDP}. The key is usually to choose a suitable recursive decomposition for your problem. Take sorting a list as an example.  If the list is $\emptyset$ then your list is trivially sorted.  If your list is $first \circ Rest$ then you first recursively sort $Rest$.   Now you have $first \circ SortedRest$, which is typically not sorted. What we need is an operation $f$ to replace $\circ$  such that $f(first,SortedRest)$ is a sorted list. That operation is the well know \textsc{Insert}, and this algorithm ends up being \textsc{InsertionSort}.\marginnote{Now what if we have $Left \circ Right$? What well known algorithm arises if you recursively sort on this structure?}
+
+Let's go ahead and knock the whole algorithm out using recursive functions. First \textsc{Insert}\sidenote{using the same recursive strategy of course}. Let $e$ be some singular datum and $S$ be a Sorted (ascending order) List.
+\begin{codebox}
+\Procname{\textsc{Insert}$(e,S)$}
+\li  \If $S \isequal \emptyset$
+\li  \Then 
+	   \Return $e \circ \emptyset$  
+\li  \ElseIf $e <= \attrib{S}{first}$
+\li  \Then 
+        \Return $e \circ S$
+\li  \ElseNoIf
+\li   \Return $\attrib{S}{first} \circ \textsc{Insert}(e,\attrib{S}{rest})$
+	 \End
+\end{codebox}
+
+Now, for list $L$
+\begin{codebox}
+\Procname{\textsc{Insertion-Sort}$(L)$}
+\li \If $L \isequal \emptyset$
+\li \Then
+		\Return $\emptyset$
+\li \Else
+\li     \Return \textsc{Insert}$(\attrib{L}{first},$\textsc{Insertion-Sort}$(\attrib{L}{rest}))$
+    \End
+\end{codebox}
+
+There we have it. I'd be remiss if I didn't stop and point out that this algorithmic strategy is called \textit{Structural Recursion} as our algorithm recurses on the recursive structure of the data. It requires two things:
+\begin{enumerate}
+\item A recursive structure.
+\item An operation which combines a solution and new data to form a new solution.
+\end{enumerate}
+In general, the goal is to have the algorithm recursively follow the recursive structure of the input. Both \textsc{Insert} and \textsc{Insertion-Sort} from above employ this strategy.
+
+\section{Summations}
+
+Summations should be viewed as notation, as declaratives. They're not imperatives. If you see a summation, don't immediately reduce it to something.  Often you'll actually want to expand it in order to find some larger pattern that leads to a closed-form solution. That's a topic for another time though, right now we want to talk about the fact that summations have a \textsc{recursive structure}.   
+\begin{equation*}
+\sum\limits_{i=0}^{n}f(i) \equiv (f(0) + \sum\limits_{i=1}^{n}f(i)
+\end{equation*}
+
+\subsection{Killer Apps}
+
+Memorize these and learn how to prove their correctness. They\sidenote{and their limiting behaviors} are insanely useful in algorithm analysis. 
+\begin{enumerate}
+\item \textsc{Arithmetic Series}
+\begin{equation}
+S(n) = \sum\limits_{i=0}^{n} = \dfrac{n(n+1)}{2}
+\end{equation}
+\item \textsc{Geometric Series}
+\begin{equation}
+G(n,a) = \sum\limits_{i=0}^{n}a^i = \dfrac{a^{n+1}-1}{a-1}
+\end{equation}
+\end{enumerate}
+
+\section{Induction}
+
+Whether your algorithm is recursive or iterative\sidenote{or something else}, you need to evaluate its correctness. Once you're pretty sure it's correct, that means a mathematical proof.  The good news is that the go to technique for recursion and iteration is the same: \textsc{Mathematical Induction}. 
+
+A quick review of induction.  The idea for induction comes from the recursive structure of the Natural Numbers\sidenote{$n \in \mathbb{N} = \left\{\begin{array}{c} 0 \\ 1 \\ 1+n^\prime \in \mathbb{N} \end{array} \right. $}. Thus, we follow two steps:
+\begin{enumerate}
+\item \textit{Basis Step}Show the property holds for a basis step\sidenote{0,1 or some finite $n$}
+\item \textit{Inductive Step} Make the \textsc{inductive hypothesis} and assume the property holds for $n$\sidenote{the Recursive component $n^\prime$ of the recursive case} and show that under this assumption, the property follows for $n+1$. 
+\end{enumerate}
+Sometimes we'll need to make a slightly stronger claim with the induction and show that there's some $k>1$ such that the property holds for all $i$ where $0\leq i \leq k$.  The basic form is roughly, ``it works at the bottom, so I should be able to climb to $n$.''.  This stronger form is, ``I can climb from the bottom to $k$, so I should be able to climb to $n$''.  The key here is the logic you use to prove the inductive step should invoke some sense of the basis step. Strong induction makes sure your recursive has a base case to hit. 
+
+\subsection{Recursive Algorithms and Induction}
+
+The property we're primarily concerned with is algorithm correctness, which is not always obviously akin to counting.  What we've seen though is that our algorithms typically have some kind of recursive structure like counting. If you wrote a recursive algorithm based on structural recursion than your work is pretty much done. We'll simply prove by induction on the structure\sidenote{structural induction}. Take Insertion Sort for example. The base case of the recursion is the base case of the induction. The recursively sorted data is what we get by the \textsc{inductive hypothesis}. Thus, we're left to justify that our combination operation correctly produces a sorted list\sidenote{Here there be dragons. Don't gloss over details in this step}.   
+
+\begin{theorem}
+For any Sorted List $S$ and additional datum $e$, \textsc{Insert}$(e,S)$ is the list containing all the elements of $S$ long with $e$ sorted in ascending order.
+\label{th:Insert}
+\end{theorem}
+
+We prove theorem \ref{th:Insert} by structural induction on the list $S$. 
+\begin{proof}
+\textit{Basis Step:}  Let $S$ be the empty list $\emptyset$. Then for any datum $e$, \textsc{Insert}$(e,S)$ is the singleton list $e \circ \emptyset \equiv (e)$.  Any singleton list is trivially sorted.
+
+\textit{Induction Step}:  Assume then that for non-empty list $S = S.first \circ S.Rest$ with datum $e$, \textsc{Insert}$(e,S.rest)$ is a list containing all the elements of $S.rest$ along with $e$ sorted in ascending order. Now consider two cases.
+\begin{enumerate}
+\item $e \leq S.first$\newline
+Let datum $e$ be less than or equal to the first of $S.first$.  In this case, $Insert(e,S)$ is $e \circ S$. Because $S$ is sorted, $S.first$ is less than or equal to all elements found in $S.Rest$. It follows then that $e \circ S$ is also sorted in ascending order.
+
+\item $e > \leq S.first$\newline
+Let datum $e$ be strictly greater than $S.first$. Then $Insert(e,S)$ is the list $S.first \circ$\textsc{Insert}$(e,S.rest)$. Because $S.first < e \leq n\in S.Rest$, and, by the inductive hypothesis, \textsc{Insert}$(e,S.rest)$ is sorted in ascending order, it follows that the list $S.first \circ$\textsc{Insert}$(e,S.rest)$ is also sorted in ascending order. 
+\end{enumerate}
+Thus, by the hypothesis of induction, \textsc{Insert}$(e,S)$ is a list sorted in ascending order for all datum $e$ and sorted lists $S$.
+\end{proof}
+
+Now that we know \textsc{Insert} is correct, we can turn to \textsc{Insertion-Sort}.
+
+\begin{theorem}
+For any list $L$, \textsc{Insertion-Sort}$(L)$ is the list containing all the elements of $L$ sorted in ascending order.
+\label{th:ISort}
+\end{theorem}
+
+We prove theorem \ref{th:ISort} by structural induction on the list $L$.
+\begin{proof}
+\textit{Basis Step:} Let $L$ be the empty list $\emptyset$. Then \textsc{Insertion-Sort}$(L)$ is also $\emptyset$ which is trivially sorted.
+\textit{Induction Step}: Assume for non-empty list $L = L.first \circ L.Rest$ that \textsc{Insertion-Sort}$(L.rest)$ is a list containing all the elements of $L.Rest$ sorted in ascending order.  Then, \textsc{Insert}$(L)$ is the list  \textsc{Insert}$(L.first,$\textsc{Insertion-Sort}$(L.Rest)$.  By theorem \ref{th:Insert}, this list is all the elements for $L$ sorted in ascending order. 
+
+Thus, by the hypothesis of induction, for any list $L$, \textsc{Insertion-Sort}$(L)$ returns a list sorted in ascending order.
+\end{proof}
+
+It's important to note that some assumptions were made in the course of designing and proving the correctness of our sorting algorithm.  First, we assumed a well defined $\circ$ operator.  This is a fair assumption for lists as concatenation of lists is well-defined.  The trickier assumption was that the elements of the list and the datum argument of \textsc{Insert} were well-ordered to the point that $\leq$ and $>$ could be determined. If any of these assumptions doesn't apply to our problem, then our algorithm \textit{is not correct}. 
+
+\subsection{Summations and Induction}
+ 
+Proving the closed form of a summation is a classic case for induction. In this case we use induction on the sequence of integers over which the summation ranges. The base case occurs when the range is empty or contains a single item. The inductive hypothesis comes from the recursive structure of the summation, which in turn comes from the recursive structure of the integers. Let's prove that repeated addition is multiplication.
+
+\begin{theorem}
+$\sum\limits_{i=1}^{n} a = an$
+\label{th:sumexp}
+\end{theorem}
+
+We prove theorem \ref{th:sumexp} by induction on $n$.
+\begin{proof}
+\textit{Basis Step:} Let $n=1$. Then,
+\[ \sum\limits_{i=1}^{1} a = a \].
+\textit{Induction Step:} Assume that the closed form holds for $n-1$ and  $\sum\limits{i=1}{n-1} a = a(n-1)$.  Then for $n$
+\[ \sum\limits_{i=1}^{n} a = \sum\limits_{i=1}^{n-1} + a \]. By the inductive hypothesis, 
+\[ \begin{array}{rcl} \sum\limits_{i=1}^{n-1} + a &=& a(n-1) + a \\ &=& an \end{array} \]
+\end{proof}
+Notice that we invoked the recursive structure in the summation when we peeled out the $n-1$ summation. It was there that we assumed\sidenote{rightly} that induction works.
+
+\section{Iteration}
+
+Our \textsc{Insertion-Sort} differs from Skiena's; his is written for indexed sequences\sidenote{think arrays} and uses iterative loops and ours is written for recursive lists and uses structural recursion.  First off, any indexed structure is a recursive object by virtue of its set of index values\sidenote{$[0,size) \equiv [0,0]\cup [1,size)$}.  We can easily re-tune our recursive list-based algorithm to a recursive indexed sequence based algorithm.  We can even do so in a much more imperative, stateful manner where we modify the sequence contents in place.  Let $S[0 \twodots n-1]$ be an indexed sequence of size $n\geq 0$ where for $0 \leq i < n$, $S[i]$ is the $i^{th}$ element in the sequence.  
+
+\begin{codebox}
+\Procname{\textsc{Insert}$(S[0 \twodots n-1])$}
+\li \If $n \leq 1$
+\li \Then
+       \Return 
+    \End
+
+\li \If $S[n-1] < S[n-2]$
+\li \Then 
+	   $swap(S[n-1],S[n-2])$
+	\End
+	
+\li \textsc{Insert}$(S[0 \twodots n-2])$
+\end{codebox}
+
+\begin{codebox}
+\Procname{\textsc{Insertion-Sort}$(S[0 \twodots n-1])$}
+
+\end{codebox}
+
+Now that we know the indexing isn't the source of our differences we can turn to the iterative process itself. Our recursive sort essentially had the following components:
+\begin{enumerate}
+\item A base case in which the input was trivially sorted
+\item A recursive case where all but one of the list was recursively sorted and then the remaining item was combined with the now sorted portion using a special operation.
+\end{enumerate}
+Most of that structure was pulled from the list structure.  The key addition we made was identifying and designing the combination operation\sidenote{Insert}. The process itself proceeds by first sorting the rest and then that's done, inserting the first. So, the last item to be sorted is the first item in the list. 
+
+Now, consider the classic iterative version presented by Skiena. He gives it in C\sidenote{pg 4}. Let's generalize to pseudocode and re-organize it a bit.  Let $S[0 \twodots n-1]$ be an indexed sequence of size $n\geq 0$ where for $0 \leq i < n$, $S[i]$ is the $i^{th}$ element in the sequence.
+\begin{codebox}
+\Procname{\textsc{Insertion-Sort}$(S[0 \twodots n-1],n)$}
+\li \For $i \gets 1$ \To $n-1$ \By 1
+\li \Do 
+		\For  $j \gets i$ \To $1$ \By -1
+\li 		\Do
+			\If $S[j] < S[j-1]$
+\li			\Then $swap(S[j],S[j-1])$
+			\End
+		\End
+	\End
+\end{codebox}
+
+We still use Insert logic to combine an arbitrary element with a sorted collection\sidenote{in this case we've embedded it in the inner loop}. Clearly it's all about when, where, and how we're utilizing Insert. The iterative solution no longer defers insertion until all but one of the list is sorted. Instead it \textit{constructs the sorted portion as it proceeds}.  The effect of this is subdivision of the array into sorted and unsorted regions. The key thing here is we've introduced more than just the \textsc{Insert} operation logic, we've introduced explicit \textsc{state} to our algorithm and in this case that state is index by $i$. 
+
+When we iterate we choose to \textit{accumulate} a solution as we proceed. This requires some sense of state for the procedure. With our sort, we can simply accumulate the solution in place, in the array.  Often, we introduce new variables to act as accumulators.\sidenote{In programming you often use another piece of state, the index variable, to control the loop itself}.  Either way, the the fundamental difference is that iteration is an inherently \textsc{stateful} process where recursion is not. So, what are the requirements for iteration then:
+\begin{itemize}
+\item Identify and design an \textsc{accumulator} operation to ``properly'' combine singular datum with accumulated state.  
+\item Identify the proper initial state. This usually means the accumulator \textsc{identity}\sidenote{The value that identifies what it's combined with. $a+0=a$} value but can also mean jump starting the process with the first $0<m<n$ values\sidenote{as our Insertion sort does}.   
+\end{itemize}
+The similarities to recursion\sidenote{and hence our in for induction} should be evident. A great discussion of recursion v. iteration can be found in the now out-of-print \textit{Concrete Abstractions}\sidenote{https://gustavus.edu/+max/concrete-abstractions.html}.
+
+\subsection{Induction and Iteration}
+
+What about the iterative algorithm? The overall structure of the accumulation of problem state is essentially the same as recursive structure. This lets us proceed by using induction on the accumulation of state. When we're counting state like we do in Insertion Sort, then we hang our induction on that. The trick is that we typically need to express the action of the loop as a \textsc{loop invariant}\textsc{property that's true prior to the loop and after each loop iteration} property that we can prove to be true.  The base case is the initial state we chose, which should satisfy our invariant. The inductive hypothesis allows us to assume the property holds up to $i-1$.  This once again leaves us to justify the correctness of our combination logic\sidenote{\textsc{accumulator} in this case}. Finally, we typically have to connect a few dots to show that when the loop terminates, it leaves us in the desired final state.  As you can see, there's a little more to do compared to structural recursion, but the overall big picture is the same: induction. Here's my more formal retelling of Skiena's proof\sidenote{pg 15} for this iterative algorithm\sidenote{pg 4}. 
+
+Let's begin with a helper statement proving the effectiveness of the inner-loop structure\sidenote{Insert!}. This induction is different as we need to work our way down the ladder rather than up it. This means our inductive hypothesis assumes things work from the base case down, and we must show the property holds for one more step down.  
+\begin{lemma}
+For any indexed sequence $S[0 \twodots n-1]$ with $n > 0$ and $S[0,n-2]$ initially sorted in ascending order, the loop  
+\begin{codebox}
+\li \For $i \gets (n-1)$ \To $1$ \By -1
+\li \Do
+	   \If $S[i] < S[i-1]$
+\li	   \Then $swap(S[i],S[i-1])$
+		\End
+	\End		
+\end{codebox}
+leaves $S[0 \twodots n-1]$ sorted in ascending order.
+\label{lm:insertLoop}
+\end{lemma}
+
+We prove lemma \ref{lm:insertLoop} by stating and then proving the loop invariant using downward induction on the value of $i$. Correctness then follows from this invariant. 
+\begin{proof}
+The following is an invariant property of this loop: the subsequence $S[i+1 \twodots n-1]$ is sorted in ascending order. The proof of this property can be show by downward induction on $i$.
+
+\textit{Basis Step:} Let $i=n-1$. The subsequence $S[n \twodots n-1]$ is empty and trivially sorted.
+
+\textit{Induction Step}: Assume that the invariant holds for $i+1$. Now consider the cases for $i$.
+\begin{enumerate}
+\item $S[i] < S[i+1]$
+By the hypothesis of induction, it follows that $S[i+1]$ is less than or equal to all the elements of $S[i+2 \twodots n-1]$, and if $S[i] < S[i+1]$, then so too is $S[i]$. The loop body in this cases causes $S[i]$ and $S[i+1]$ to be swapped. Thus the resultant region $S[i+1 \twodots n-1]$ is sorted in ascending order.
+\item $S[i] \geq S[i+1]$
+By the hypothesis of induction we know $S[i+1 \twodots n-1]$ is sorted in ascending order. Because $S[i] \geq S[i+1]$, the subsequence $S[i \twodots n-1]$ is sorted in ascending order.
+\end{enumerate}  
+The loop clearly terminates when $i=1$, and so by induction the invariant holds for $i=n-1$ to $1$ for any value of $n$.  It then follows that when the loop terminates, the sequence $S[0 \twodots n-1]$ is sorted in ascending order.
+\end{proof}
+
+We can now leverage lemma \ref{lm:insertLoop} to show that insertion sort works.  This will again proceed by induction on a loop invariant. This time we're looking at the outer loop of the algorithm.
+
+\begin{theorem}
+For any sequence $S[0 \twodots n-1]$ of $n \geq 0$ elements, \textsc{insertion\_sort}$(s,n)$ sorts $s$ in ascending order.
+\label{th:ISort-Skiena}
+\end{theorem}
+
+We prove theorem \ref{th:ISort-Skiena} by stating and proving by induction the loop invariant of the outer loop. 
+\begin{proof}
+Let us proceed by proving the following invariant of the outer loop: the sequence $S[0 \twodots i-1]$ is sorted in ascending order.
+
+\textit{Basis Step:} Let $i=1$. Then the sequence $S[0 \twodots 0]$  is a singleton and trivially sorted.
+\textit{Induction Step:} Assume that for $i-1$, the sub-sequence $s[0 \twodots i-2]$ is sorted in ascending order. Now by lemma \ref{lm:insertLoop} the subsequence $S[0 \twodots i-1]$ is sorted in ascending order at the completion of the inner loop.  As the inner loop ends the outer loop, it follows from the hypothesis of induction that the invariant holds and $S[0 \twodots i-1]$ is sorted in ascending order.  The outer loop clearly terminates at $n-1$ and so for any value of $n$, $S[0 \twodots n-1]$ will be sorted in ascending order.
+\end{proof}
+
+I did some mathematical hand-waving in these proofs.  The term ``clearly'' was used with respect to loop termination values.  Loop termination is often not clear, so when in doubt clearly justify the termination of the loop itself. Guess what you'd use to do that? You guessed it, induction.
+
+
+\end{document}

@@ -1,0 +1,111 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{braket}
+\usepackage{setspace}
+\usepackage{algorithm2e}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+\title{Useful Equalities and Definitions}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A list of useful mathematical definitions for algorithm analysis and computer science in general. Much of this was copied with minor modification from:
+\begin{itemize}
+\item Cormen, Thomas H., et. al.. \textit{Introduction to Algorithms}. Second Edition. MIT Press. Cambridge, MA. 2001.
+\end{itemize}
+
+\end{abstract}
+
+
+\section{Floors and Ceilings}
+
+\begin{definition}
+For real number $x$, the \textbf{floor} of $x$, $\lfloor x \rfloor$, is the greatest integer less than $x$.
+\end{definition}
+
+\begin{definition}
+For real number $x$, the \textbf{ceiling} of $x$, $\lceil x \rceil$, is the least integer greater than $x$.
+\end{definition}
+
+For any real number $x$,
+\begin{equation}
+x-1 < \lfloor x \rfloor \leq x \leq \lceil x \rceil < x+1
+\end{equation}
+
+For any integer $n$,
+\begin{equation}
+\lceil n/2 \rceil + \lfloor n/2 \rfloor = n
+\end{equation}
+
+For any real $n \geq 0$ and integers $a,b > 0$:
+\begin{eqnarray}
+\lceil \lceil n/a \rceil / b\rceil = \lceil n/ab \rceil \\
+\lfloor \lfloor n/a \rfloor / b \rfloor = \lfloor n/ab \rfloor \\
+\lceil a/b \rceil \leq (a + (b-1))/b \\
+\lfloor a/b \rfloor \geq (a - (b-1))/b 
+\end{eqnarray}
+
+\section{Polynomials}
+
+\begin{definition}
+Given integer $d>1$, a \textbf{Polynomial in $n$ of degree $d$} is a function $p(n)$,
+\begin{equation}
+p(n) = \sum\limits_{i=0}^{d}a_in^i
+\end{equation}
+where $a_0,a_1,\ldots,a_d$ are the \textbf{coefficients} and $a_d \neq 0$.
+\end{definition}
+
+
+\section{Exponentials}
+
+For all real $a > 0,m,n$:
+\begin{eqnarray}
+a^0 = 1 \\
+a^1 = a \\
+a^{-1} = \frac{1}{a} \\
+(a^m)^n = a^{mn} \\
+(a^m)^n = (a^n)^m \\
+a^ma^n = a^{m+n}
+\end{eqnarray}
+
+
+\section{Logarithms}
+
+\begin{definition}
+Where $b^y = x$, $\log_b x = y$.
+\end{definition}
+
+The following is only notation,
+\[ \log_b^k n = (\log_b n)^k \]
+
+For all $a>0$,$b>0$, $c>0$, $n$,
+\begin{eqnarray}
+a = b^{\log_b a} \\
+\log_c (ab) = \log_c a + \log_c b \\
+\log_b a^n = n \log_b a \\
+\log_b a = \frac{\log_c a}{\log_c b} \\
+\log_b \frac{1}{a} = -\log_b a \\
+\log_b a = \frac{1}{\log_a b} \\
+a^{\log_b c} = c^{\log_b a}
+\end{eqnarray}
+
+\section{Roots}
+
+\begin{definition}
+Where $r^n= x$, then the $n^{th}$ root of $x$ is $r$ and is denoted by $\sqrt[y]{x} = x^{\frac{1}{y}} = r$
+\end{definition}
+
+\begin{eqnarray}
+\sqrt[n]{ab} = \sqrt[n]{a}\sqrt[n]{b} \\
+\sqrt[n]{\frac{a}{b}} = \frac{\sqrt[n]{a}}{\sqrt[n]{b}} \\
+\sqrt[n]{a^m} = (a^m)^{\frac{1}{n}} = a^{\frac{m}{n}}
+\end{eqnarray}
+
+\end{document}
