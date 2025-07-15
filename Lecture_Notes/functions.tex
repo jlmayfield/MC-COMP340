@@ -8,7 +8,7 @@
 \newtheorem{definition}{Definition}
 \newtheorem{remark}{Remark}
 
-\title{Useful Equalities and Definitions}
+\title{Algorithm Analysis: Useful Equalities, Definitions, and Theorems}
 \author{}
 \date{}
 
@@ -16,96 +16,209 @@
 \maketitle
 
 \begin{abstract}
-A list of useful mathematical definitions for algorithm analysis and computer science in general. Much of this was copied with minor modification from:
+A list of useful mathematical definitions for algorithm analysis and computer science in general. Much of this was copied with minor modification from our textbook and:
 \begin{itemize}
 \item Cormen, Thomas H., et. al.. \textit{Introduction to Algorithms}. Second Edition. MIT Press. Cambridge, MA. 2001.
 \end{itemize}
 
 \end{abstract}
 
+\section{Big Oh}
 
-\section{Floors and Ceilings}
+\begin{definition}[Big Oh]
+ \leavevmode\newline\marginnote{$g(n)$ is an upper bound on $f(n)$. $g \geq f$ (ish). ``I can draw a $g(n)$ above $f(n)$''}Where $f(n)=\mathcal{O}(g(n))$, then there exists some constant $c$ such that $f(n) \leq c*g(n)$ for all $n \geq n_0$.
+\end{definition}
+\vspace{.25in}
 
-\begin{definition}
-For real number $x$, the \textbf{floor} of $x$, $\lfloor x \rfloor$, is the greatest integer less than $x$.
+\begin{definition}[Big Omega]
+\leavevmode\newline\marginnote{$g(n)$ is a lower bound on $f(n)$. $g \leq f$ (ish). ``I can draw a $g(n)$ below $f(n)$''}Where $f(n)=\Omega(g(n))$, then there exists some constant $c$ such that $f(n) \geq c*g(n)$ for all $n \geq n_0$.
+\end{definition}
+\vspace{.25in}
+
+\begin{definition}[Big Theta]
+\leavevmode\newline\marginnote{$f(n)$ is the same class of function as $g(n)$. ``$f(n)$ is a $g(n)$ (ish).''\textbf{We can now classify functions based on $\Theta$. Think $f(n) \in \Theta(g(n))$. $\Theta(g(n))$ is the class. This means we can classify algorithms in terms of their Time Complexity (work done). }}Where $f(n)=\Theta(g(n))$, then there exists constants $c_1$ and $c_2$ such that $ c_1*g(n) \leq f(n) \leq c_2*g(n)$ for all $n \geq n_0$.
+\end{definition}
+\vspace{1in}
+
+\begin{theorem}[Transitivity]
+\leavevmode\newline\marginnote{If $a \leq b$ and $b \leq c$, then $a \leq c$. Ordering still works how you think it does.}If $f(n) = \mathcal{O}(g(n))$ and $g(n) = \mathcal{O}(h(n))$, then $f(n) = \mathcal{O}(h(n))$.
+\end{theorem}
+\vspace{.5in}
+
+
+\begin{definition}[Dominance Relations]
+\leavevmode\newline\marginnote{$\mathcal{O}$, $\Omega$, and $\Theta$ impose an ordering on \textit{classes} of functions. }
+Where $f(n) \neq \Theta(g(n))$, we say that $f(n)$ \textit{dominates} $g(n)$, or $f(n) \gg g(n)$, when $f(n) = \Omega(g(n))$ or similarly $g(n) = \mathcal(O)(g(n))$.
+\end{definition}
+\vspace{.25in}
+
+\begin{theorem}[Dominance Relations of Common Functions]
+\[ n! \gg 2^n \gg n^3 \gg n^2 \gg n\log n \gg n \gg \log n \gg 1 \]
+\end{theorem}
+\newpage
+
+
+\begin{theorem}[Adding Functions]
+\leavevmode\newline\marginnote{The dominant term of a sum determines the class of the sum. \newline Algorithms can always be deconstructed into a series of independent blocks of code. The work done by the algorithm is the sum of the work done by each block. \textbf{You can analyze each block independently of the others and reduce the algorithm's complexity to the dominant block.}}
+$f(n) + g(n) \rightarrow \Theta( max( f(n),g(n) ) )$
+\end{theorem}
+\vspace{2in}
+
+\begin{theorem}[Multiplying Functions]
+\leavevmode\newline\marginnote{Multiplying can result in reclassification. \newline Repetition of work happens through loops (loop body is repeated) and recursion (function is repeated). Both forms of repetition induce a multiplication of work. ``Repeat these operations, this number of times.'' \textbf{Multiplication is impactful, but orderly. You can simplify the terms (see R.H.S.) but cannot ignore one for the other like with addition.}}
+$\mathcal{O}(f(n)*g(n)) = \mathcal{O}(f(n))*\mathcal{O}(g(n)))$\newline
+$\Omega(f(n)*g(n)) = \Omega(f(n))*\Omega(g(n)))$\newline
+$\Theta(f(n)*g(n)) = \Theta(f(n))*\Theta(g(n)))$\newline
+\end{theorem}
+\newpage
+
+
+\section{Sums}
+
+\begin{definition}[Summation Notation]
+\leavevmode\newline\marginnote{It's a concise way of writing the sum of $n$ things,\newline \textit{sum([f(i) for i in range(1,n+1)])}}
+\[ \sum\limits_{i=1}^{n} f(i) = f(1) + f(2) + \ldots + f(n-1) + f(n) \]
 \end{definition}
 
-\begin{definition}
-For real number $x$, the \textbf{ceiling} of $x$, $\lceil x \rceil$, is the least integer greater than $x$.
-\end{definition}
+\begin{theorem}[Sum Closed-Forms and Equivalents]
+\leavevmode\newline
+\hspace{.25in}$\sum\limits_{i=1}^{n} a = a \times n$\marginnote{$a$ is independent of $i$. Its just multiplication disguised as addition.}\newline
+\hspace{.25in}$\sum\limits_{i=k}^{n} i = \sum\limits_{i=1}^{n} f(i) - \sum\limits_{i=1}^{k-1} f(i)$ \marginnote{Sums can always be made to start from 1 (or zero if needed)}\newline
+\hspace{.25in}$\sum\limits_{i=1}^{n} i = \frac{n(n+1)}{2} = \Theta(n^2)$\newline
+\hspace{.25in}$\sum\limits_{i=1}^{n} i^2 = \frac{n(n+1)(2n+1)}{6} = \Theta(n^3)$\newline
+\hspace{.25in}$\sum\limits_{i=1}^{n} i^3 = \frac{n^2(n+1)^2}{4} = \Theta(n^4)$\newline
+\end{theorem}
 
-For any real number $x$,
-\begin{equation}
-x-1 < \lfloor x \rfloor \leq x \leq \lceil x \rceil < x+1
-\end{equation}
+\begin{theorem}[\textit{Geometric Progression}. Sum of Exponential Sequence]
+\leavevmode\newline\marginnote{We really like $a=2$, where \newline $\sum\limits_{i=0}^{n} 2^i = (2^{n+1} -1) = \Theta(2^{n+1})$}
+For $a \geq 1$, \[\sum\limits_{i=0}^{n} a^i = \frac{(a^{n+1} -1)}{(a-1)} = \Theta(a^{n+1})\]
+\end{theorem}
 
-For any integer $n$,
-\begin{equation}
-\lceil n/2 \rceil + \lfloor n/2 \rfloor = n
-\end{equation}
+\begin{theorem}[Sum of Increasing Logarithms]
+\leavevmode\newline\marginnote{$\log 1 + \log 2 + \ldots + \log n-1 + \log n$}
+\[\sum\limits_{i=1}^{n} \log i  = \log n! = \Theta(n \log n )\]
+\end{theorem}
 
-For any real $n \geq 0$ and integers $a,b > 0$:
-\begin{eqnarray}
-\lceil \lceil n/a \rceil / b\rceil = \lceil n/ab \rceil \\
-\lfloor \lfloor n/a \rfloor / b \rfloor = \lfloor n/ab \rfloor \\
-\lceil a/b \rceil \leq (a + (b-1))/b \\
-\lfloor a/b \rfloor \geq (a - (b-1))/b 
-\end{eqnarray}
+\begin{theorem}[Sum of $p^{th}$ power of an Integer Sequence]
+\leavevmode\newline\marginnote{Greatest hits: $\sum\limits_{i=1}^{n} i$, $\sum\limits_{i=1}^{n} i^2$, $\sum\limits_{i=1}^{n} i^3$ }
+For $p \geq 0$, \[\sum\limits_{i=1}^{n} i^p = \Theta(n^{p+1})\].
+\end{theorem}
 
-\section{Polynomials}
+\begin{theorem}[\textit{Harmonic Numbers}. Sum of a Fraction Sequence]
+\leavevmode\newline\marginnote{$\frac{1}{1}+\frac{1}{2}+\frac{1}{3}+\ldots$}
+\[\sum\limits_{i=1}^{n} \frac{1}{i} = \sum\limits_{i=1}^{n} i^{-1} = \Theta(\log n)\].
+\end{theorem}
 
-\begin{definition}
-Given integer $d>1$, a \textbf{Polynomial in $n$ of degree $d$} is a function $p(n)$,
-\begin{equation}
-p(n) = \sum\limits_{i=0}^{d}a_in^i
-\end{equation}
-where $a_0,a_1,\ldots,a_d$ are the \textbf{coefficients} and $a_d \neq 0$.
-\end{definition}
 
+
+\begin{theorem}[Sum of the multiplicative inverse of $p^{th}$ power of an Integer Sequence]
+ \leavevmode\newline\marginnote{for $p=-2$,\newline $\sum\limits_{i=1}^{n} i^{-2} = 1+\frac{1}{4} +\frac{1}{9}+\frac{1}{16}+\ldots$ }
+For $p < -1$, \[\sum\limits_{i=1}^{n} i^p = \sum\limits_{i=1}^{n} \frac{1}{i^{-p}} = \Theta(1)\].
+\end{theorem}
+
+
+
+\begin{theorem}[Sum of Exponential Sequence with Fractional Base]
+\leavevmode\newline\marginnote{We really like $a=\frac{1}{2}$, where \newline $\sum\limits_{i=0}^{n} (\frac{1}{2})^i = 1+\frac{1}{2}+\frac{1}{4}+\frac{1}{8}+\ldots < 2$}For $|a| < 1$, \[\sum\limits_{i=0}^{n} a^i = \Theta(1)\]
+\end{theorem}
+
+
+
+
+\newpage
 
 \section{Exponentials}
 
-For all real $a > 0,m,n$:
-\begin{eqnarray}
-a^0 = 1 \\
-a^1 = a \\
-a^{-1} = \frac{1}{a} \\
-(a^m)^n = a^{mn} \\
-(a^m)^n = (a^n)^m \\
-a^ma^n = a^{m+n}
-\end{eqnarray}
+\begin{definition}[Product Notation]
+\leavevmode\newline\marginnote{$\sum$ is to addition as $\prod$ is to multiplication}
+\[\prod\limits_{i=1}^{n} f(i) = f(1)*f(2)*\ldots*f(n-1)*f(n)\]
+\end{definition}
 
+\begin{definition}[Exponentiation with Integer Exponents]
+  \leavevmode\newline
+\hspace{.25in}For integer $n\geq1$, $a^n = \prod\limits_{i=1}^{n} a$\marginnote{$a^{2} = a*a$}\newline
+\leavevmode\newline
+\hspace{.25in}For integer $n \leq -1$, $a^n = \prod\limits_{i=1}^{n} \frac{1}{a^{-n}}$\marginnote{$a^{-2} = \frac{1}{a^2} = \frac{1}{a}*\frac{1}{a}}\newline
+\end{definition}
+
+\begin{theorem}[Properties of Exponents]
+  \leavevmode\newline
+For all real $a > 0,m,n$:\newline
+\hspace{.25in}$a^0 = 1$\newline
+\hspace{.25in}$a^ma^n = a^{m+n}$\newline
+\hspace{.25in}$a^{-1} = \frac{1}{a}$\newline
+\hspace{.25in}$(a^m)^n = a^{mn} = (a^n)^m = a^{nm}$\newline
+\end{theorem}
 
 \section{Logarithms}
 
-\begin{definition}
-Where $b^y = x$, $\log_b x = y$.
+\begin{definition}[Logarithm base $b$.]
+  \leavevmode\newline
+\marginnote{$\log$ in the inverse of exponential. ``The $\log_b x$ is the number you'd need to raise $b$ to in order to get $x$.''}Where $b^y = x$, $\log_b x = y$. For notational convenience: $\log_b^k n = (\log_b n)^k$. Also, $\log_{10}$ is $\log$, $\log_2$ is $lg$ and $\log_e$ is $ln$.
 \end{definition}
+\vspace{.25in}
 
-The following is only notation,
-\[ \log_b^k n = (\log_b n)^k \]
+\begin{theorem}[Properties of Logarithms]
+  \leavevmode\newline\marginnote{Think in terms of exponent properties. Like, ``With $\log a$, $a$ is an exponent and operates by the same rules.''}\vspace{.1in}For all $a>0$,$b>0$, $c>0$, $n$,
 
-For all $a>0$,$b>0$, $c>0$, $n$,
-\begin{eqnarray}
-a = b^{\log_b a} \\
-\log_c (ab) = \log_c a + \log_c b \\
-\log_b a^n = n \log_b a \\
-\log_b a = \frac{\log_c a}{\log_c b} \\
-\log_b \frac{1}{a} = -\log_b a \\
-\log_b a = \frac{1}{\log_a b} \\
-a^{\log_b c} = c^{\log_b a}
-\end{eqnarray}
+\hspace{.25in}$\log_c (ab) = \log_c a + \log_c b $\newline
+\hspace{.25in}$\log_b \frac{1}{a} = -\log_b a$\newline
+\hspace{.25in}$\log_b \frac{c}{a} = \log_b c -\log_b a$\newline
+\hspace{.25in}$\log_b a^n = n \log_b a$\newline
+\hspace{.25in}$a^{\log_b c} = c^{\log_b a}\newline
+\end{theorem}
+
+\begin{theorem}[Relationships between Log bases]
+  \leavevmode\newline\marginnote{\textbf{Logs of different bases differ by a constant multiple.}}
+\hspace{.25in}$\log_b a = \frac{\log_c a}{\log_c b} = \frac{1}{\log_c b} \log_c a$\newline
+\hspace{.25in}$\log_b a = \frac{1}{\log_a b}$\newline
+\end{theorem}
+
+\newpage
 
 \section{Roots}
 
-\begin{definition}
+\begin{definition}[Roots]
 Where $r^n= x$, then the $n^{th}$ root of $x$ is $r$ and is denoted by $\sqrt[y]{x} = x^{\frac{1}{y}} = r$
 \end{definition}
 
-\begin{eqnarray}
-\sqrt[n]{ab} = \sqrt[n]{a}\sqrt[n]{b} \\
-\sqrt[n]{\frac{a}{b}} = \frac{\sqrt[n]{a}}{\sqrt[n]{b}} \\
-\sqrt[n]{a^m} = (a^m)^{\frac{1}{n}} = a^{\frac{m}{n}}
-\end{eqnarray}
+\begin{theorem}[Properties of Roots]
+  \leavevmode \newline
+\hspace{.25in}$\sqrt[n]{ab} = \sqrt[n]{a}\sqrt[n]{b}$\newline
+\hspace{.25in}$\sqrt[n]{\frac{a}{b}} = \frac{\sqrt[n]{a}}{\sqrt[n]{b}}$\newline
+\hspace{.25in}$\sqrt[n]{a^m} = (a^m)^{\frac{1}{n}} = a^{\frac{m}{n}}$\newline
+\end{theorem}
+
+
+\section{Floors and Ceilings}
+
+\begin{definition}[Floor Function]
+\leavevmode\newline\marginnote{Round down to the nearest integer.}For real number $x$, the \textbf{floor} of $x$, $\lfloor x \rfloor$, is the greatest integer less than $x$.
+\end{definition}
+
+\begin{definition}[Ceiling Function]
+  \leavevmode\newline\marginnote{Round up to the nearest integer.}For real number $x$, the \textbf{ceiling} of $x$, $\lceil x \rceil$, is the least integer greater than $x$.
+\end{definition}
+
+\begin{theorem}[Rounding Reals]
+  \leavevmode\newline
+For any real number $x$,\newline
+\hspace{.25in}$x-1 < \lfloor x \rfloor \leq x \leq \lceil x \rceil < x+1$\newline
+For any real $n \geq 0$ and integers $a,b > 0$: \newline
+\hspace{.25in}$\lceil \lceil n/a \rceil / b\rceil = \lceil n/ab \rceil $\newline
+\hspace{.25in}$\lfloor \lfloor n/a \rfloor / b \rfloor = \lfloor n/ab \rfloor $\newline
+\hspace{.25in}$\lceil a/b \rceil \leq (a + (b-1))/b $\newline
+\hspace{.25in}$\lfloor a/b \rfloor \geq (a - (b-1))/b$\newline
+
+\end{theorem}
+
+\begin{theorem}[Rounding Integers]
+  \leavevmode\newline
+For any integer $n$,\newline
+\hspace{.25in}$\lceil n/2 \rceil + \lfloor n/2 \rfloor = n$\newline
+\end{theorem}
+
+
+
 
 \end{document}
